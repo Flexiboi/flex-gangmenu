@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <title>Flex-management</title>
+</head>
+<body>
+    <div id="background">
+        <div id="container">
+            <div id="maingrid">
+                <div id="menu" class="disableselect">
+                    <div><h1 id="home" class="active">HOME</h1></div>
+                    <div><h1 id="bank">SAFE</h1></div>
+                    <div><h1 id="stash">STASH</h1></div>
+                    <div><h1 id="members">MEMBERS</h1></div>
+                    <div><h1 id="manage">MANAGE</h1></div>
+                    <!-- <div><h1 id="settings">SETTINGS</h1></div> -->
+                </div>
+                <div><h1 id="close" class="disableselect">CLOSE</h1></div> 
+                <div id="contents">
+                    <div id="homemenu" class="disableselect">
+                        <h1>WELCOME, <span id="username" class="highlight">%USER%</span>!</h1>
+                        <div id="logo"></div>
+                        <h2 id="safename">GANG: <span class="highlight">%SAFENAME%</span></h2>
+                    </div>
+    
+                    <div id="bankmenu">
+                        <h1 id="safe" class="disableselect">SAFE</h1>
+                        <div id="safebalans"><p>10000000000.00$</p></div>
+                        <h1 id="cash" class="disableselect">CASH</h1>
+                        <div id="cashbalans"><p>10000.00$</p></div>
+    
+                        <div id="managemoney">
+                            <input type="number" name="amount" id="moneyamount" class="disableselect" style="border:none" placeholder="amount in $">
+                            <div id="btn1" class="disableselect">DEPOSIT</div>
+                            <div id="btn2" class="disableselect">WITHDRAW</div>
+                        </div>
+    
+                        <div id="bankhistory">
+                            <div class="history">
+                                <span id="historyid">199</span>
+                                <span id="user">BERNAARD</span>
+                                <span id="amount">100000.00$</span>
+                                <span id="time">01/01/2023 13:12:05</span>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div id="membersmenu">
+                        <div id="membercontainer">
+                            <!-- <div class="member">
+                                <p id="membername" style="overflow: hidden;">BERNAARD DEN DIKKE</p>
+                                <p id="rang">TWEEDERANG</p>
+                                <p id="promote" class="bossaction">PROMOTE</p>
+                                <p id="demote" class="bossaction">DEMOTE</p>
+                                <p id="kick" class="bossaction">KICK</p>
+                            </div> -->
+                        </div>
+                    </div>
+    
+                    <div id="managemenu" class="disableselect">
+                        <h1>UPGRADE STASH / ALARM</h1>
+                        <div id="upgradestash">
+                            <h2>UPGRADE STASH</h2>
+                            <h4 id="lv">LV. <span>2</span></h4>
+                            <h4 id="cost">1000000.00$</h4>
+                            <h4 id="info">100 SLOTS / 500KG</h4>
+                            <h3 id="stashlevel">CURRENT LV. <span>1</span></h3>
+                        </div>
+    
+                        <div id="upgradealarm">
+                            <h2>UPGRADE ALARM</h2>
+                            <h4 id="lv">LV. <span>2</span></h4>
+                            <h4 id="cost">1000000.00$</h4>
+                            <h4 id="info">HARDER MINIGAME</h4>
+                            <h3 id="alarmlevel">CURRENT LV. <span>1</span></h3>
+                        </div>
+                    </div>
+    
+                    <div id="settingsmenu">
+    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="js/java.js"></script>
+</html>

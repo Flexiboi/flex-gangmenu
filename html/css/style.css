@@ -1,0 +1,418 @@
+:root {
+    --bgfade: rgba(255, 159, 42, 0.466);
+    --backgroundcolor: #f4f2f2;
+    --background: linear-gradient(0deg, #f4f2f2 0%, #ffffff 100%);
+    --basecolor: rgb(246, 138, 66);
+    --gradient: linear-gradient(180deg, rgb(242, 147, 45) 0%, rgb(237, 134, 38) 100%);
+    --black: rgb(30, 29, 29);
+    --highlight: rgb(255, 0, 132);
+    --highlightgradient: linear-gradient(0deg, rgba(255, 111, 0, 0.472) 0%, rgba(37, 40, 105, 0) 100%);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+    color: white;
+    transition: all 0.3s;
+}
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+.disableselect {
+    user-select: none; /* standard syntax */
+    -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+    -moz-user-select: none; /* mozilla browsers */
+    -khtml-user-select: none; /* webkit (konqueror) browsers */
+    -ms-user-select: none; /* IE10+ */
+}
+
+html,body {
+    height: 100%;
+}
+
+input:focus, textarea:focus, select:focus{
+    outline: none;
+}
+
+#background {
+    /* display: none; */
+    margin: 0 auto;
+    transform: translateY(230px);
+    z-index: -1;
+    width: 960px;
+    height: 575px;
+}
+
+#background::after { 
+    content: ""; 
+    position: absolute; 
+    inset: -.025em; 
+    background: linear-gradient(to bottom right, 
+    var(--bgfade), var(--bgfade)); 
+    filter: blur(5em); 
+    z-index: -1; 
+} 
+
+#container {
+    /* display: none; */
+    margin: 0 auto;
+    transform: translateY(10px);
+    width: 960px;
+    height: 575px;
+    background: var(--background);
+    filter: drop-shadow(0px 2px 2px rgba(14, 14, 14, 0.302));
+}
+
+#maingrid {
+    display: grid;
+}
+
+#menu {
+    overflow: hidden;
+    grid-row: 1;
+    grid-column: 1;
+    display: flex;
+    width: 960px;
+    height: 40px;
+    background: var(--gradient);
+    filter: drop-shadow(0px 4px 1px #0000001c);
+}
+
+#menu h1 {
+    padding: 8.3px;
+    font-size: 20px;
+    filter: drop-shadow(0px 2px 2px rgba(14, 14, 14, 0.302));
+}
+
+.active {
+    background: var(--black);
+    background: var(--highlightgradient);
+    filter: drop-shadow(0px 1px 1px #0000001c);
+}
+
+.highlight {
+    color: var(--highlight);
+}
+
+#menu h1:hover, #close:hover {
+    color: var(--black);
+    cursor: pointer;
+}
+
+#close {
+    position: fixed;
+    right: 10px;
+    top: 10px;
+    font-size: 18px;
+    filter: drop-shadow(0px 2px 2px rgba(14, 14, 14, 0.302));
+}
+
+#contents {
+    grid-row: 2;
+    grid-column: 1;
+    width: 960px;
+    height: 535px;
+}
+
+/* HOME */
+#homemenu {
+    width: 960px;
+    height: 535px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+}
+
+#homemenu h1 {
+    grid-column: 2/5;
+    grid-row: 1;
+    font-size: 45px;
+    text-align: center;
+    margin-top: 75px;
+    color: var(--black);
+    filter: drop-shadow(0px 4px 2px rgba(14, 14, 14, 0.302));
+
+}
+
+#homemenu h2 {
+    grid-column: 2/5;
+    grid-row: 3;
+    text-align: center;
+    margin-top: 5px;
+    color: var(--black);
+}
+
+#homemenu #logo {
+    width: 200px;
+    height: 200px;
+    grid-column: 3;
+    grid-row: 2;
+    background-color: var(--basecolor);
+    filter: drop-shadow(0px 4px 2px rgba(14, 14, 14, 0.302));
+}
+
+/* BANK */
+#bankmenu {
+    display: none;
+    width: 960px;
+    height: 535px;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+}
+
+#cashbalans, #safebalans {
+    overflow: hidden;
+    color: rgb(255, 255, 255);
+    text-align: center;
+    font-weight: bold;
+    margin: 10px;
+    background: var(--gradient);
+    filter: drop-shadow(0px 2px 1px rgba(14, 14, 14, 0.295));
+}
+
+#cashbalans p, #safebalans p {
+    margin-top: 75px;
+    font-size: 50px;
+    filter: drop-shadow(0px 2px 1px rgba(14, 14, 14, 0.295));
+}
+
+#cashbalans {
+    grid-row: 1;
+    grid-column: 1/3;
+}
+
+#safebalans {
+    grid-row: 2;
+    grid-column: 1/3;
+}
+
+#cash, #safe {
+    position: relative;
+    margin-top: 10px;
+    z-index: 1;
+    color: var(--black);
+    font-size: 45px;
+    letter-spacing: 70px;
+    filter: drop-shadow(0px 2px 1px rgba(14, 14, 14, 0.295));
+}
+
+#cash {
+    top: -160px;
+    left: -65px;
+    grid-row: 2;
+    grid-column: 2;
+}
+
+#safe {
+    top: 15px;
+    left: -65px;
+    grid-row: 2;
+    grid-column: 2;
+}
+
+#bankmenu #btn1, #bankmenu #btn2, #bankmenu #moneyamount {
+    width: 97%;
+    margin: 5px;
+    margin-left: 10px;
+    background: var(--gradient);
+    line-height: 40px;
+    text-align: center;
+    font-weight: bold;
+    filter: drop-shadow(0px 2px 1px rgba(14, 14, 14, 0.295));
+}
+
+#bankmenu #managemoney {
+    grid-column: 1/3;
+    grid-row: 3;
+}
+
+#bankmenu #btn1:hover, #bankmenu #btn2:hover {
+    transform: scale(1.01);
+    cursor: pointer;
+}
+
+#bankhistory {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    margin: 10px;
+    grid-column: 3/5;
+    grid-row: 1/5;
+    background: var(--gradient);
+    box-shadow: inset rgba(13, 13, 13, 0.247) 0px 0px 10px -1px;
+}
+
+#bankhistory .history {
+    display: flex;
+    border-bottom: solid 3px var(--backgroundcolor);
+}
+
+#bankhistory .history span {
+    font-size: 15px;
+    padding: 5px;
+}
+
+#bankhistory .history #historyid {
+    width: 50px;
+    margin-top: 7px;
+}
+
+#bankhistory .history #user {
+    width: 100px;
+    margin-top: 7px;
+}
+
+#bankhistory .history #amount {
+    width: 100px;
+    margin-top: 7px;
+}
+
+#bankhistory .history #time {
+    width: 100px;
+}
+
+/* MEMBERS */
+#membersmenu {
+    display: none;
+    width: 960px;
+    height: 535px;
+    grid-template-columns: repeat(5, 1fr);
+    padding: 10px;
+}
+
+#membercontainer {
+    width: 937px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+#membersmenu .member {
+    display: grid;
+    grid-column: 1/6;
+    grid-template-columns: repeat(5, 1fr);
+    column-gap: 5px;
+    height: 35px;
+    margin-top: 8px;
+    padding: 7px;
+    background: var(--gradient);
+    box-shadow: inset rgba(13, 13, 13, 0.247) 0px 0px 10px -1px;
+}
+
+#membersmenu p {
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+}
+
+#membersmenu .member #membername , #membersmenu .member #rang {
+    width: 325px;
+}
+
+#membersmenu #promote, #membersmenu #demote, #membersmenu #kick {
+    width: 100px;
+}
+
+#membersmenu .member #promote:hover, #membersmenu .member #demote:hover, #membersmenu .member #kick:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+/* MANAGE */
+#managemenu {
+    display: none;
+    width: 960px;
+    height: 535px;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    filter: drop-shadow(0px 2px 1px rgba(14, 14, 14, 0.295));
+}
+
+#managemenu span {
+    color: var(--backgroundcolor);
+}
+
+#managemenu h1 {
+    text-align: center;
+    margin-top: 90px;
+    color: var(--black);
+    grid-column-start: 1;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    font-size: 65px;
+}
+
+#upgradestash h2, #upgradealarm h2 {
+    margin-top: 7px;
+    font-size: 40px;
+}
+
+#upgradestash, #upgradealarm {
+    margin: 15px;
+    text-align: center;
+}
+
+#upgradestash h2, #upgradestash h4, #upgradealarm h2, #upgradealarm h4 {
+    filter: drop-shadow(0px 2px 1px rgba(14, 14, 14, 0.295));
+}
+
+#upgradestash h4, #upgradealarm h4 {
+    margin-top: 5px;
+    font-size: 35px;
+    color: var(--black);
+}
+
+#upgradestash {
+    grid-column-start: 1;
+    grid-row-start: 2;
+    background: var(--gradient);
+    filter: drop-shadow(0px 2px 1px rgba(14, 14, 14, 0.295));
+}
+
+#stashlevel {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    color: var(--black);
+    filter: drop-shadow(0px 2px 1px rgba(14, 14, 14, 0.295));
+}
+
+#upgradealarm {
+    grid-column-start: 2;
+    grid-row-start: 2;
+    background: var(--gradient);
+    filter: drop-shadow(0px 2px 1px rgba(14, 14, 14, 0.295));
+}
+
+#alarmlevel {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    color: var(--black);
+    filter: drop-shadow(0px 2px 1px rgba(14, 14, 14, 0.295));
+}
+
+#alarmlevel span {
+    color: var(--backgroundcolor);
+}
+
+#upgradestash:hover, #upgradealarm:hover {
+    transform: scale(1.02);
+    cursor: pointer;
+}
+
+/* SETTINGS */
+#settingsmenu {
+    display: none;
+    width: 960px;
+    height: 535px;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+}

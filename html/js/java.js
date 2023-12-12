@@ -13,17 +13,17 @@ window.addEventListener('message', function(event) {
         cont.style.display = 'block';
         
         setup();
-
-        if(!IsLoaded) {
-            navigation();
-            upgrade();
-            bank();
-            members();
-            IsLoaded = true;
-        }
     } else if (data.type == "update") {
         setup();
     }
+});
+
+$(function() {
+        navigation();
+        upgrade();
+        bank();
+        members();
+        IsLoaded = true;
 });
 
 function setup() {

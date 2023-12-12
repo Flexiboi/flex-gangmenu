@@ -31,7 +31,7 @@ I have made all colors ez changeable in css.
 </br>
 </br>
 
-# How to edit the minigames
+# HOW TO EDIT MINIGAMES
 </br>
 You can edit or make your own minigames that are triggerd when someone tries to steal money.
 </br>
@@ -41,8 +41,31 @@ On fail it sends a notify to all the gang members.
 
 </br>
 </br>
+
+# SETUP
+</br>
+Add the sql file to your database.
+</br>
+Setup each gang / location in the config (Auto added to the config if the gang uses it for first time).
+</br>
+Setup each upgrade.
+</br>
+Edit the minigames to your liking.
+</br>
+Enjoy!
+</br>
 </br>
 
+# DEPENDENCIES
+</br>
+- qb-core
+</br>
+- sql script
+</br>
+- ps-ui (or changes minigames)
+</br>
+</br>
+</br>
 # TODO
 </br>
 - Add a check if gang members are online

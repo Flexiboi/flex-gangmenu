@@ -39,11 +39,6 @@ Config.SecurityUpgrades = {
         info = 'Hardest minigame', -- Info on upgrade page
         game = 'medium', -- name after 'flex-gangmenu:server:{thisname}' to trigger the minigame / event they need to complete
     },
-    [4] = {
-        cost = 5000, -- Amount it cost to buy
-        info = 'Guard spawn', -- Info on upgrade page
-        game = 'hard', -- name after 'flex-gangmenu:server:{thisname}' to trigger the minigame / event they need to complete
-    },
 }
 
 Config.MenuLocs = {

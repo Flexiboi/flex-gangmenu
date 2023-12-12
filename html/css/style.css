@@ -39,7 +39,7 @@ input:focus, textarea:focus, select:focus{
 }
 
 #background {
-    /* display: none; */
+    display: none;
     margin: 0 auto;
     transform: translateY(230px);
     z-index: -1;
@@ -58,7 +58,7 @@ input:focus, textarea:focus, select:focus{
 } 
 
 #container {
-    /* display: none; */
+    display: none;
     margin: 0 auto;
     transform: translateY(10px);
     width: 960px;

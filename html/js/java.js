@@ -13,8 +13,10 @@ window.addEventListener('message', function(event) {
         cont.style.display = 'block';
         
         setup();
+        members();
     } else if (data.type == "update") {
         setup();
+        members();
     }
 });
 
@@ -22,7 +24,6 @@ $(function() {
         navigation();
         upgrade();
         bank();
-        members();
         IsLoaded = true;
 });
 
@@ -57,7 +58,7 @@ function setup() {
         membercontainer.innerHTML = div;
     }
 
-    //MEMBERS
+    //BANKHISTORY
     var bankhistory = document.querySelector('#bankhistory');
     let transactions = '';
     bankhistory.innerHTML = transactions;
@@ -84,22 +85,54 @@ function setup() {
 
     //MANAGE
     var upgradealarmlv = document.querySelector('#upgradealarm #lv span');
-    upgradealarmlv.innerHTML = data.securitylv + 1;
+    if(data.securitylv + 1 <= data.maxsecuritylv) {
+        upgradealarmlv.innerHTML = data.securitylv + 1;
+    } else {
+        upgradealarmlv.innerHTML = 'MAX';
+    }
     var upgradealarmcost = document.querySelector('#upgradealarm #cost');
-    upgradealarmcost.innerHTML = data.securityupgrade.cost+moneysign;
     var upgradealarminfo = document.querySelector('#upgradealarm #info');
-    upgradealarminfo.innerHTML = data.securityupgrade.info;
     var alarmlevellevel = document.querySelector('#upgradealarm #alarmlevel span');
-    alarmlevellevel.innerHTML = data.securitylv;
+    if(data.securityupgrade !== undefined){
+        if(data.securitylv + 1 <= data.maxsecuritylv) {
+            upgradealarmcost.innerHTML = data.securityupgrade.cost+moneysign;
+            upgradealarminfo.innerHTML = data.securityupgrade.info;
+            alarmlevellevel.innerHTML = data.securitylv;
+        } else {
+            upgradealarmcost.innerHTML = 'MAXED';
+            upgradealarminfo.innerHTML = 'MAXED';
+            alarmlevellevel.innerHTML = 'MAXED';
+        }
+    } else {
+        upgradealarmcost.innerHTML = 'MAXED';
+        upgradealarminfo.innerHTML = 'MAXED';
+        alarmlevellevel.innerHTML = 'MAXED';
+    }
 
     var upgradestashlv = document.querySelector('#upgradestash #lv span');
-    upgradestashlv.innerHTML = data.stashlv + 1;
+    if(data.stashlv + 1 <= data.maxstashlv) {
+        upgradestashlv.innerHTML = data.stashlv + 1;
+    } else {
+        upgradestashlv.innerHTML = 'MAX';
+    }
     var upgradestashcost = document.querySelector('#upgradestash #cost');
-    upgradestashcost.innerHTML = data.stashupgrade.cost+moneysign;
     var upgradestashinfo = document.querySelector('#upgradestash #info');
-    upgradestashinfo.innerHTML = data.stashupgrade.slots + ' slots/' + data.stashupgrade.weight + ' weight';
     var upgradestashlevel = document.querySelector('#upgradestash #stashlevel span');
-    upgradestashlevel.innerHTML = data.stashlv;
+    if(data.stashupgrade !== undefined) {
+        if(data.stashlv + 1 <= data.maxstashlv) {
+            upgradestashcost.innerHTML = data.stashupgrade.cost+moneysign;
+            upgradestashinfo.innerHTML = data.stashupgrade.slots + ' slots/' + data.stashupgrade.weight + ' weight';
+            upgradestashlevel.innerHTML = data.stashlv;
+        } else {
+            upgradestashcost.innerHTML = 'MAXED';
+        upgradestashinfo.innerHTML = 'MAXED';
+        upgradestashlevel.innerHTML = 'MAXED';
+        }
+    } else {
+        upgradestashcost.innerHTML = 'MAXED';
+        upgradestashinfo.innerHTML = 'MAXED';
+        upgradestashlevel.innerHTML = 'MAXED';
+    }
 }
 
 function members() {
@@ -109,35 +142,29 @@ function members() {
 
     kick.addEventListener("click", (e) => {
         e.preventDefault();
-        if(data.isgangboss) {
-            $.post(`https://flex-gangmenu/kickMember`, JSON.stringify({
-                safeid: data.safeid,
-                gang: data.gang,
-                cid: e.target.dataset.cid,
-            }));
-        }
+        $.post(`https://flex-gangmenu/kickMember`, JSON.stringify({
+            safeid: data.safeid,
+            gang: data.gang,
+            cid: e.target.dataset.cid,
+        }));
     });
 
     promote.addEventListener("click", (e) => {
         e.preventDefault();
-        if(data.isgangboss) {
-            $.post(`https://flex-gangmenu/promoteMember`, JSON.stringify({
-                safeid: data.safeid,
-                gang: data.gang,
-                cid: e.target.dataset.cid,
-            }));
-        }
+        $.post(`https://flex-gangmenu/promoteMember`, JSON.stringify({
+            safeid: data.safeid,
+            gang: data.gang,
+            cid: e.target.dataset.cid,
+        }));
     });
 
     demote.addEventListener("click", (e) => {
         e.preventDefault();
-        if(data.isgangboss) {
-            $.post(`https://flex-gangmenu/demoteMember`, JSON.stringify({
-                safeid: data.safeid,
-                gang: data.gang,
-                cid: e.target.dataset.cid,
-            }));
-        }
+        $.post(`https://flex-gangmenu/demoteMember`, JSON.stringify({
+            safeid: data.safeid,
+            gang: data.gang,
+            cid: e.target.dataset.cid,
+        }));
     });
 }
 
@@ -147,24 +174,24 @@ function upgrade() {
 
     upgradestash.addEventListener("click", (e) => {
         e.preventDefault();
-        if(data.isgangboss) {
+        if(data.stashupgrade !== undefined) {
             $.post(`https://flex-gangmenu/upgradeStash`, JSON.stringify({
                 safeid: data.safeid,
                 gang: data.gang,
                 cost: data.stashupgrade.cost,
-                lv: data.securitylv,
+                lv: data.stashlv,
             }));
         }
     });
 
     upgradealarm.addEventListener("click", (e) => {
         e.preventDefault();
-        if(data.isgangboss) {
+        if(data.securityupgrade !== undefined) {
             $.post(`https://flex-gangmenu/upgradeAlarm`, JSON.stringify({
                 safeid: data.safeid,
                 gang: data.gang,
                 cost: data.securityupgrade.cost,
-                lv: data.stashlv,
+                lv: data.securitylv,
             }));
         }
     });

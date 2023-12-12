@@ -46,7 +46,6 @@ QBCore.Functions.CreateCallback('flex-gangmenu:server:getinfo', function(source,
         info.lastname = Player.PlayerData.charinfo.lastname
         info.cash = Player.PlayerData.money['cash']
         info.gang = result[1].gang
-        info.isgangboss = PlayerGang.isboss
         info.gangmembers = GetGangMembers(gang)
         info.balance = result[1].balance
         info.stashlv = result[1].stashlv
@@ -55,14 +54,13 @@ QBCore.Functions.CreateCallback('flex-gangmenu:server:getinfo', function(source,
 
         cb(info)
     else
-        MySQL.insert.await('INSERT INTO gangmenu (gang, balance, stashlv, securitylv) VALUES (?, ?, ?, ?)', { gang, 0, 1, 1 })
+        MySQL.Async.execute('INSERT INTO gangmenu (gang, balance, stashlv, securitylv) VALUES (?, ?, ?, ?)', { gang, 0, 1, 1 })
 
         info.citizenid = Player.PlayerData.citizenid
         info.firstname = Player.PlayerData.charinfo.firstname
         info.lastname = Player.PlayerData.charinfo.lastname
         info.cash = Player.PlayerData.money['cash']
         info.gang = gang
-        info.isgangboss = PlayerGang.isboss
         info.balance = 0
         info.stashlv = 1
         info.securitylv = 1
@@ -71,10 +69,12 @@ QBCore.Functions.CreateCallback('flex-gangmenu:server:getinfo', function(source,
     end
 end)
 
-RegisterServerEvent("flex-gangmenu:server:kickmember", function(cid)
+RegisterServerEvent("flex-gangmenu:server:kickmember", function(cid, id, gang)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local PlayerGang = QBCore.Functions.GetPlayer(source).PlayerData.gang
+
+    if not PlayerGang.isboss then return TriggerClientEvent('QBCore:Notify', src, Lang:t('error.notgangboss'), 'error') end
 
     if PlayerGang.isboss or Player.PlayerData.citizenid == cid then
         return TriggerClientEvent('QBCore:Notify', src, Lang:t('error.cantkickself'), 'error')
@@ -84,12 +84,16 @@ RegisterServerEvent("flex-gangmenu:server:kickmember", function(cid)
     if target ~= nil then
         Target.Functions.SetGang('none', 0)
     end
+
+    TriggerClientEvent('flex-gangmenu:client:updateGangMenu', src, id, gang)
 end)
 
-RegisterServerEvent("flex-gangmenu:server:promotemember", function(cid)
+RegisterServerEvent("flex-gangmenu:server:promotemember", function(cid, id, gang)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local PlayerGang = QBCore.Functions.GetPlayer(source).PlayerData.gang
+
+    if not PlayerGang.isboss then return TriggerClientEvent('QBCore:Notify', src, Lang:t('error.notgangboss'), 'error') end
 
     if PlayerGang.isboss or Player.PlayerData.citizenid == cid then
         return TriggerClientEvent('QBCore:Notify', src, Lang:t('error.cantpromoteself'), 'error')
@@ -100,12 +104,16 @@ RegisterServerEvent("flex-gangmenu:server:promotemember", function(cid)
     if target ~= nil then
         Target.Functions.SetGang(TargetGang.name, TargetGang.level + 1)
     end
+
+    TriggerClientEvent('flex-gangmenu:client:updateGangMenu', src, id, gang)
 end)
 
-RegisterServerEvent("flex-gangmenu:server:demotemembner", function(cid)
+RegisterServerEvent("flex-gangmenu:server:demotemembner", function(cid, id, gang)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local PlayerGang = QBCore.Functions.GetPlayer(source).PlayerData.gang
+
+    if not PlayerGang.isboss then return TriggerClientEvent('QBCore:Notify', src, Lang:t('error.notgangboss'), 'error') end
 
     if PlayerGang.isboss or Player.PlayerData.citizenid == cid then
         return TriggerClientEvent('QBCore:Notify', src, Lang:t('error.cantdemoteself'), 'error')
@@ -116,9 +124,11 @@ RegisterServerEvent("flex-gangmenu:server:demotemembner", function(cid)
     if target ~= nil then
         Target.Functions.SetGang(TargetGang.name, TargetGang.level + 1)
     end
+
+    TriggerClientEvent('flex-gangmenu:client:updateGangMenu', src, id, gang)
 end)
 
-RegisterServerEvent("flex-gangmenu:server:depositmoney", function(amount)
+RegisterServerEvent("flex-gangmenu:server:depositmoney", function(amount, id, gang)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local PlayerGang = QBCore.Functions.GetPlayer(source).PlayerData.gang
@@ -128,15 +138,16 @@ RegisterServerEvent("flex-gangmenu:server:depositmoney", function(amount)
             local newbalance = result[1].balance + amount
             if newbalance >= 0 then
                 if Player.Functions.RemoveMoney("cash", amount, Lang:t("succes.withdraw")) then
-                    MySQL.update.await('UPDATE gangmenu SET balance = ? WHERE gang = ?', {newbalance, PlayerGang.name})
-                    MySQL.insert.await('INSERT INTO gangtransactions (gang, name, type, amount) VALUES (?, ?, ?, ?)', { PlayerGang.name, Player.PlayerData.charinfo.firstname .. ' '..Player.PlayerData.charinfo.lastname, 'deposit', amount})
+                    MySQL.Async.execute('UPDATE gangmenu SET balance = ? WHERE gang = ?', {newbalance, PlayerGang.name})
+                    MySQL.query.await('INSERT INTO gangtransactions (gang, name, type, amount) VALUES (?, ?, ?, ?)', { PlayerGang.name, Player.PlayerData.charinfo.firstname .. ' '..Player.PlayerData.charinfo.lastname, 'deposit', amount})
                 end
             end
         end
+        TriggerClientEvent('flex-gangmenu:client:updateGangMenu', src, id, PlayerGang.name)
     end
 end)
 
-RegisterServerEvent("flex-gangmenu:server:withdrawmoney", function(amount)
+RegisterServerEvent("flex-gangmenu:server:withdrawmoney", function(amount, id, gang)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local PlayerGang = QBCore.Functions.GetPlayer(source).PlayerData.gang
@@ -146,32 +157,36 @@ RegisterServerEvent("flex-gangmenu:server:withdrawmoney", function(amount)
             local newbalance = result[1].balance - amount
             if newbalance >= 0 then
                 if Player.Functions.AddMoney("cash", amount, Lang:t("succes.withdraw")) then
-                    MySQL.update.await('UPDATE gangmenu SET balance = ? WHERE gang = ?', {newbalance, PlayerGang.name})
-                    MySQL.insert.await('INSERT INTO gangtransactions (gang, name, type, amount) VALUES (?, ?, ?, ?)', { PlayerGang.name, Player.PlayerData.charinfo.firstname .. ' '..Player.PlayerData.charinfo.lastname, 'withdraw', amount})
+                    MySQL.Async.execute('UPDATE gangmenu SET balance = ? WHERE gang = ?', {newbalance, PlayerGang.name})
+                    MySQL.query.await('INSERT INTO gangtransactions (gang, name, type, amount) VALUES (?, ?, ?, ?)', { PlayerGang.name, Player.PlayerData.charinfo.firstname .. ' '..Player.PlayerData.charinfo.lastname, 'withdraw', amount})
                 end
             end
         end
+        TriggerClientEvent('flex-gangmenu:client:updateGangMenu', src, id, gang)
     end
 end)
 
-RegisterServerEvent("flex-gangmenu:server:upgradestash", function(gang, cost, lv)
+RegisterServerEvent("flex-gangmenu:server:upgradestash", function(gang, cost, lv, id)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
+    local PlayerGang = QBCore.Functions.GetPlayer(source).PlayerData.gang
 
-    local result = MySQL.query.await('SELECT balance FROM gangmenu WHERE gang = ?', { gang })
+    if not PlayerGang.isboss then return TriggerClientEvent('QBCore:Notify', src, Lang:t('error.notgangboss'), 'error') end
+
+    local result = MySQL.query.await('SELECT * FROM gangmenu WHERE gang = ?', { gang })
     if result[1] then
         if result[1].balance >= cost then
-            if #Config.Stashes > lv+1 then
+            if #Config.Stashes > lv then
                 local newbalance = result[1].balance - cost
-                MySQL.update.await('UPDATE gangmenu SET balance = ? WHERE gang = ?', {newbalance, gang})
-                MySQL.update.await('UPDATE gangmenu SET stashlv = ? WHERE gang = ?', {lv+1, gang})
+                MySQL.Async.execute('UPDATE gangmenu SET balance = ? WHERE gang = ?', {newbalance, gang})
+                MySQL.Async.execute('UPDATE gangmenu SET stashlv = ? WHERE gang = ?', {result[1].stashlv+1, gang})
                 TriggerClientEvent('QBCore:Notify', src, Lang:t("succes.upgradestash"), 'error')
             else
                 TriggerClientEvent('QBCore:Notify', src, Lang:t("error.stashmaxlv"), 'error')
             end
         elseif Player.Functions.RemoveMoney("cash", amount, Lang:t("succes.upgradestash")) then
-            if #Config.Stashes > lv+1 then
-                MySQL.update.await('UPDATE gangmenu SET stashlv = ? WHERE gang = ?', {lv+1, gang})
+            if #Config.Stashes > lv then
+                MySQL.Async.execute('UPDATE gangmenu SET stashlv = ? WHERE gang = ?', {result[1].stashlv+1, gang})
                 TriggerClientEvent('QBCore:Notify', src, Lang:t("succes.upgradestash"), 'error')
             else
                 TriggerClientEvent('QBCore:Notify', src, Lang:t("error.stashmaxlv"), 'error')
@@ -179,27 +194,31 @@ RegisterServerEvent("flex-gangmenu:server:upgradestash", function(gang, cost, lv
         else
             TriggerClientEvent('QBCore:Notify', src, Lang:t("error.nomoney"), 'error')
         end
+        TriggerClientEvent('flex-gangmenu:client:updateGangMenu', src, id, gang)
     end
 end)
 
-RegisterServerEvent("flex-gangmenu:server:upgradealarm", function(gang, cost, lv)
+RegisterServerEvent("flex-gangmenu:server:upgradealarm", function(gang, cost, lv, id)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
+    local PlayerGang = QBCore.Functions.GetPlayer(source).PlayerData.gang
+    
+    if not PlayerGang.isboss then return TriggerClientEvent('QBCore:Notify', src, Lang:t('error.notgangboss'), 'error') end
 
-    local result = MySQL.query.await('SELECT balance FROM gangmenu WHERE gang = ?', { gang })
+    local result = MySQL.query.await('SELECT * FROM gangmenu WHERE gang = ?', { gang })
     if result[1] then
         if result[1].balance >= cost then
-            if #Config.SecurityUpgrades > lv+1 then
+            if #Config.SecurityUpgrades > lv then
                 local newbalance = result[1].balance - cost
-                MySQL.update.await('UPDATE gangmenu SET balance = ? WHERE gang = ?', {newbalance, gang})
-                MySQL.update.await('UPDATE gangmenu SET securitylv = ? WHERE gang = ?', {lv+1, gang})
+                MySQL.Async.execute('UPDATE gangmenu SET balance = ? WHERE gang = ?', {newbalance, gang})
+                MySQL.Async.execute('UPDATE gangmenu SET securitylv = ? WHERE gang = ?', {result[1].securitylv+1, gang})
                 TriggerClientEvent('QBCore:Notify', src, Lang:t("succes.upgradesecurity"), 'error')
             else
                 TriggerClientEvent('QBCore:Notify', src, Lang:t("error.securitymax"), 'error')
             end
-        elseif Player.Functions.RemoveMoney("cash", amount, Lang:t("succes.upgradesecurity")) then
-            if #Config.SecurityUpgrades > lv+1 then
-                MySQL.update.await('UPDATE gangmenu SET securitylv = ? WHERE gang = ?', {lv+1, gang})
+        elseif Player.Functions.RemoveMoney("cash", cost, Lang:t("succes.upgradesecurity")) then
+            if #Config.SecurityUpgrades > lv then
+                MySQL.Async.execute('UPDATE gangmenu SET securitylv = ? WHERE gang = ?', {result[1].securitylv+1, gang})
                 TriggerClientEvent('QBCore:Notify', src, Lang:t("succes.upgradesecurity"), 'error')
             else
                 TriggerClientEvent('QBCore:Notify', src, Lang:t("error.securitymax"), 'error')
@@ -207,6 +226,7 @@ RegisterServerEvent("flex-gangmenu:server:upgradealarm", function(gang, cost, lv
         else
             TriggerClientEvent('QBCore:Notify', src, Lang:t("error.nomoney"), 'error')
         end
+        TriggerClientEvent('flex-gangmenu:client:updateGangMenu', src, id, gang)
     end
 end)
 
@@ -222,8 +242,8 @@ RegisterServerEvent("flex-gangmenu:server:stealmoney", function(id, gang)
         if result[1].balance >= amount then
             if Player.Functions.AddMoney("cash", amount, Lang:t("succes.stolemoney")) then
                 local newbalance = result[1].balance - amount
-                MySQL.update.await('UPDATE gangmenu SET balance = ? WHERE gang = ?', {newbalance, gang})
-                MySQL.insert.await('INSERT INTO gangtransactions (gang, name, type, amount) VALUES (?, ?, ?, ?)', { gang, 'Anonymouse', 'withdraw', amount})
+                MySQL.Async.execute('UPDATE gangmenu SET balance = ? WHERE gang = ?', {newbalance, gang})
+                MySQL.query.await('INSERT INTO gangtransactions (gang, name, type, amount) VALUES (?, ?, ?, ?)', { gang, 'Anonymouse', 'withdraw', amount})
                 TriggerClientEvent('QBCore:Notify', src, Lang:t("succes.stolemoney", { value = amount }), 'error')
             end
         else

@@ -10,6 +10,7 @@ local Translations = {
         cantkickself = 'You can not kick yourself..',
         cantpromoteself = 'You can not promote yourself..',
         cantdemoteself = 'You can not demote yourself..',
+        notgangboss = 'You are not the boss here..',
         nomoney = 'There is not enough money available to upgrade..',
         stashmaxlv = 'You already have max lv!',
         securitymax = 'You already own max lv security!',

@@ -71,7 +71,6 @@ function CreateZones()
 end
 
 function OpenGangMenu(id, gang)
-    print('open')
     QBCore.Functions.TriggerCallback('flex-gangmenu:server:getinfo', function(info)
         if info then
             if PlayerGang.name == gang then
@@ -80,14 +79,15 @@ function OpenGangMenu(id, gang)
                     safeid = id,
                     username = info.firstname,
                     gang = info.gang,
-                    isgangboss = info.isgangboss,
                     gangmembers = info.gangmembers,
                     cashbalance = info.cash,
                     safebalance = info.balance,
                     stashlv = info.stashlv,
-                    stashupgrade = Config.Stashes[info.stashlv+1],
+                    maxstashlv = #Config.Stashes,
+                    stashupgrade = Config.Stashes[info.stashlv + 1],
                     securitylv = info.securitylv,
-                    securityupgrade = Config.SecurityUpgrades[info.securitylv+1],
+                    maxsecuritylv = #Config.SecurityUpgrades,
+                    securityupgrade = Config.SecurityUpgrades[info.securitylv + 1],
                     transactions = info.transactions
                 })
                 SetNuiFocus(true, true)
@@ -103,11 +103,11 @@ function OpenGangMenu(id, gang)
 end
 
 function StealMoney(lv, id, gang)
-    TriggerEvent('flex-gangmenu:server:'..Config.SecurityUpgrades[lv].game, id, gang)
+    TriggerEvent('flex-gangmenu:client:'..Config.SecurityUpgrades[lv].game, id, gang)
     TriggerServerEvent('hud:server:GainStress', Config.StealStress)
 end
 
-function updateGangMenu(id, gang)
+RegisterNetEvent('flex-gangmenu:client:updateGangMenu', function(id, gang)
     QBCore.Functions.TriggerCallback('flex-gangmenu:server:getinfo', function(info)
         if info then
             SendNUIMessage({
@@ -115,19 +115,20 @@ function updateGangMenu(id, gang)
                 safeid = id,
                 username = info.firstname,
                 gang = info.gang,
-                isgangboss = info.isgangboss,
                 gangmembers = info.gangmembers,
                 cashbalance = info.cash,
                 safebalance = info.balance,
                 stashlv = info.stashlv,
-                stashupgrade = Config.Stashes[info.stashlv+1],
+                maxstashlv = #Config.Stashes,
+                stashupgrade = Config.Stashes[info.stashlv + 1],
                 securitylv = info.securitylv,
-                securityupgrade = Config.SecurityUpgrades[info.securitylv+1],
+                maxsecuritylv = #Config.SecurityUpgrades,
+                securityupgrade = Config.SecurityUpgrades[info.securitylv + 1],
                 transactions = info.transactions
             })
         end
     end, gang)
-end
+end)
 
 -- NUI
 RegisterNUICallback('closeMenu', function(_, cb)
@@ -139,45 +140,33 @@ RegisterNUICallback('openStash', function(data, cb)
 end)
 
 RegisterNUICallback('kickMember', function(data, cb)
-    TriggerServerEvent('flex-gangmenu:server:kickmember', data.cid)
-    Wait(500)
-    updateGangMenu(data.safeid, data.gang)
+    TriggerServerEvent('flex-gangmenu:server:kickmember', data.cid, data.safeid, data.gang)
 end)
 
 RegisterNUICallback('promoteMember', function(data, cb)
-    TriggerServerEvent('flex-gangmenu:server:promotemember', data.cid)
-    Wait(500)
-    updateGangMenu(data.safeid, data.gang)
+    TriggerServerEvent('flex-gangmenu:server:promotemember', data.cid, data.safeid, data.gang)
 end)
 
 RegisterNUICallback('demoteMember', function(data, cb)
-    TriggerServerEvent('flex-gangmenu:server:demotemembner', data.cid)
-    Wait(500)
-    updateGangMenu(data.safeid, data.gang)
+    TriggerServerEvent('flex-gangmenu:server:demotemembner', data.cid, data.safeid, data.gang)
 end)
 
 RegisterNUICallback('depositMoney', function(data, cb)
-    TriggerServerEvent('flex-gangmenu:server:depositmoney', data.amount)
-    Wait(500)
-    updateGangMenu(data.safeid, data.gang)
+    TriggerServerEvent('flex-gangmenu:server:depositmoney', data.amount, data.safeid, data.gang)
 end)
 
 RegisterNUICallback('withdrawMoney', function(data, cb)
-    TriggerServerEvent('flex-gangmenu:server:withdrawmoney', data.amount)
-    Wait(500)
-    updateGangMenu(data.safeid, data.gang)
+    TriggerServerEvent('flex-gangmenu:server:withdrawmoney', data.amount, data.safeid, data.gang)
 end)
 
 RegisterNUICallback('upgradeStash', function(data, cb)
-    TriggerServerEvent('flex-gangmenu:server:upgradestash', data.gang, data.cost, data.lv)
-    Wait(500)
-    updateGangMenu(data.safeid, data.gang)
+    TriggerServerEvent('flex-gangmenu:server:upgradestash', data.gang, data.cost, data.lv, data.safeid)
 end)
 
 RegisterNUICallback('upgradeAlarm', function(data, cb)
-    TriggerServerEvent('flex-gangmenu:server:upgradealarm', data.gang, data.cost, data.lv)
+    TriggerServerEvent('flex-gangmenu:server:upgradealarm', data.gang, data.cost, data.lv, data.safeid)
     Wait(500)
-    updateGangMenu(data.safeid, data.gang)
+    
 end)
 
 AddEventHandler('onResourceStop', function(resource)

@@ -1,5 +1,5 @@
 local QBCore = exports['qb-core']:GetCoreObject()
-RegisterNetEvent('flex-gangmenu:server:easy', function(id, gang)
+RegisterNetEvent('flex-gangmenu:client:easy', function(id, gang)
     exports['ps-ui']:Circle(function(success)
         if success then
             QBCore.Functions.Progressbar("grab_money_safe", Lang:t('info.grabmoney'), 1000 * Config.TakeMoneyTime, false, true, {
@@ -22,7 +22,7 @@ RegisterNetEvent('flex-gangmenu:server:easy', function(id, gang)
     end, 5, 20)
 end)
 
-RegisterNetEvent('flex-gangmenu:server:medium', function(id, gang)
+RegisterNetEvent('flex-gangmenu:client:medium', function(id, gang)
     exports['ps-ui']:Maze(function(success)
         if success then
             QBCore.Functions.Progressbar("grab_money_safe", Lang:t('info.grabmoney'), 1000 * Config.TakeMoneyTime, false, true, {
@@ -45,7 +45,7 @@ RegisterNetEvent('flex-gangmenu:server:medium', function(id, gang)
     end, 20)
 end)
 
-RegisterNetEvent('flex-gangmenu:server:hard', function(id, gang)
+RegisterNetEvent('flex-gangmenu:client:hard', function(id, gang)
     exports['ps-ui']:VarHack(function(success)
         if success then
             QBCore.Functions.Progressbar("grab_money_safe", Lang:t('info.grabmoney'), 1000 * Config.TakeMoneyTime, false, true, {
@@ -68,7 +68,7 @@ RegisterNetEvent('flex-gangmenu:server:hard', function(id, gang)
      end, 22, 10)
 end)
 
-RegisterNetEvent('flex-gangmenu:server:guards', function(id, gang)
+RegisterNetEvent('flex-gangmenu:client:guards', function(id, gang)
     if success then
         QBCore.Functions.Progressbar("grab_money_safe", Lang:t('info.grabmoney'), 1000 * Config.TakeMoneyTime, false, true, {
             disableMovement = false,
